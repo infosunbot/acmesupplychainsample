@@ -154,7 +154,7 @@ contract AcmeSupplyChain is Ownable, CustomerRole, WidgetMakerRole, WarehouseMan
     return orderCount;
   }
 
-  function shipOrder(uint orderId) public onlyWarehouseManager  returns (address customer)  {
+  function shipOrder(uint orderId) public onlyWarehouseManager  returns (uint sku)  {
     //User Story : 4 bullet 1, Given that the user is a warehouse manager
     //onlyWarehouseManager can call this function
 
@@ -179,8 +179,10 @@ contract AcmeSupplyChain is Ownable, CustomerRole, WidgetMakerRole, WarehouseMan
 
         // Emit the Ship event
         emit Shipped(sku);
-            return customer;
+            
         }
+
+        return sku;
   }
 
 }

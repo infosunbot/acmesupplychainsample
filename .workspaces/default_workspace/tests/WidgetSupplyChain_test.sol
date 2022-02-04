@@ -34,27 +34,41 @@ contract AcmeSupplyChainTest {
 
     }
     
-    function SuccessWarehouseManagerAddStock() public payable {
+    function WarehouseManagerAddStock() public payable {
 
-                // account index varies 0-9, value is in wei
-       // Assert.equal(msg.sender, TestsAccounts.getAccount(1), "Invalid sender");
-       // Assert.equal(msg.value, 100, "Invalid value");
+        acmeSupplyChainToTest.addWarehouseManager(msg.sender);  // adding sender to warehouse manager list 
+        acmeSupplyChainToTest.renounceCustomer();  // removing the sender from customer list if already there
 
+        // we expect succes while updating the Inventory if sender in warehouse manager list 
         Assert.equal(acmeSupplyChainToTest.updateWidgetInventories(3), uint(3), "update stock amount looks correct");
-        //Assert.equal(acmeSupplyChainToTest.updateWidgetInventories(3), uint(1), "update stock amount looks not correct");
     }
     
-    function CustomerCanNotAddStock () public {
-
-        Assert.ok(msg.sender == customerID, 'only a WarehouseManager can perform this action');
-
-         acmeSupplyChainToTest.updateWidgetInventories( 3);
+    function CustomerCanNotAddStockExpectFail () public {
+        
+        acmeSupplyChainToTest.addCustomer(msg.sender);  // adding sender to customer list
+        acmeSupplyChainToTest.renounceWarehouseManager();  // removing the sender from warehouse manager list if already there
+        
+         acmeSupplyChainToTest.updateWidgetInventories(3);  // we expect error while updating the Inventory if sender in customer list
     }
 
     function CustomerPlaceOrder () public {
 
-      
+        acmeSupplyChainToTest.addWarehouseManager(msg.sender);  // adding sender to warehouse manager list 
+        acmeSupplyChainToTest.renounceCustomer();  // removing the sender from customer list if already there
+        acmeSupplyChainToTest.updateWidgetInventories(3);      
+        
         Assert.equal(acmeSupplyChainToTest.orderWidget(1), uint(1), "order count looks correct");
+    }
+
+
+
+    function WarehouseManagerShipOrder () public {
+
+        // we expect succes while updating the Inventory if sender in warehouse manager list 
+        acmeSupplyChainToTest.updateWidgetInventories(3);
+
+      
+        Assert.equal(acmeSupplyChainToTest.shipOrder(1), uint(2), "stocklist was 3, after ship 1 we expect 2");
     }
 
 
